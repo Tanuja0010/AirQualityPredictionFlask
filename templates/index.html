@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Air Quality Index (AQI)😶‍🌫️🤧</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div id="background-overlay">
+        <img src="/static/img.webp" alt="Air Quality Background">
+    </div>
+
+    <div id="content">
+        <h1>India's Air Quality Information System 😶‍🌫️</h1>
+        
+        <h3 style="text-align: center;">This web application predicts air quality based on various input parameters. It utilizes machine learning algorithms to provide accurate predictions.</h3>
+        <form id="prediction-form" method="post" action="/predict">
+            <label for="city">Select City:</label><br>
+            <select id="city" name="city">
+                {% for city in cities %}
+                    <option value="{{ city }}">{{ city }}</option>
+                {% endfor %}
+            </select><br><br>
+            
+            <label for="date">Select Date:</label><br>
+            <input type="date" id="date" name="date" min="2015-01-01" max="2020-12-31"><br><br>
+
+            <label for="model">Select Model:</label><br>
+            <select id="model" name="model">
+                <option value="linear">Linear Regression</option>
+                <option value="random_forest">Random Forest</option>
+                <option value="XGBoost">XGBoost</option>
+                <option value="lightBGM">LightBGM</option>
+            </select><br><br>
+
+            <input type="submit" value="Predict"><br><br>
+        </form>
+        <div id="prediction-result"></div>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#city').change(function() {
+                var selectedCity = $(this).val();
+                $.ajax({
+                    type: 'POST',
+                    url: '/get_dates',
+                    contentType: 'application/json',
+                    data: JSON.stringify({city: selectedCity}), // Send city as JSON data
+                    success: function(response) {
+                        var dates = response;
+                        var minDate = dates[0];
+                        var maxDate = dates[dates.length - 1];
+                        $('#date').attr('min', minDate);
+                        $('#date').attr('max', maxDate);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error:', error);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

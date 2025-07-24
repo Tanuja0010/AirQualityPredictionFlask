@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Quality Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+    <div id="background-overlay">
+        <img src="{{ url_for('static', filename='img.webp') }}" alt="Air Quality Background">
+    </div>
+    <div id="content">
+        <h1>Air Quality Result</h1>
+        <h2>AQI for {{ city }} on {{ date }}</h2>
+
+        <table>
+            <tr>
+                <th>Pollutant</th>
+                <th>Concentration (µg/m³)</th>
+            </tr>
+            {% for pollutant, concentration in pollutant_concentrations.items() %}
+            <tr>
+                <td>{{ pollutant }}</td>
+                <td>{{ concentration }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <h2 class="aqi-status {% if AQI <= 50 %}green
+                    {% elif AQI <= 100 %}yellow
+                    {% elif AQI <= 200 %}orange
+                    {% elif AQI <= 300 %}red
+                    {% else %}red
+                    {% endif %}">Final AQI: {{ AQI }} [{{ category }}]</h2>
+
+
+        <!-- Modify the result.html template -->
+        <h2>EFFECT ON HEALTH :</h2>
+        <table>
+            <tr>
+                <th>High Concentration Pollutant</th>
+                <th>Health Implication</th>
+            </tr>
+            {% for pollutant, implication in health_implications.items() %}
+            {% if implication != "" %}
+            <tr>
+                <td>{{ pollutant }}</td>
+                <td>{{ implication }}</td>
+            </tr>   
+            {% endif %}
+            {% endfor %}
+        </table>
+
+
+        <!-- Table with AQI remarks -->
+        <table id="aqi-remarks">
+            <tr>
+                <th>AQI</th>
+                <th>Remark</th>
+                <th>Possible Health Impacts</th>
+            </tr>
+            <tr>
+                <td>0-50</td>
+                <td>Good</td>
+                <td>Minimal Impact</td>
+            </tr>
+            <tr>
+                <td>51-100</td>
+                <td>Satisfactory</td>
+                <td>Minor breathing discomfort to sensitive people</td>
+            </tr>
+            <tr>
+                <td>101-200</td>
+                <td>Moderate</td>
+                <td>Breathing discomfort to the people with lung, heart disease, children and older adults</td>
+            </tr>
+            <tr>
+                <td>201-300</td>
+                <td>Poor</td>
+                <td>Breathing discomfort to people on prolonged exposure</td>
+            </tr>
+            <tr>
+                <td>301-400</td>
+                <td>Very Poor</td>
+                <td>Respiratory illness to the people on prolonged exposure</td>
+            </tr>
+            <tr>
+                <td>&gt;400</td>
+                <td>Severe</td>
+                <td>Respiratory effects even on healthy people</td>
+            </tr>
+        </table>
+    </div>               
+</body>
+</html>
